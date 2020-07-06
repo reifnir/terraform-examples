@@ -1,0 +1,42 @@
+packages:
+  - nginx
+write_files:
+  - owner: www-data:www-data
+    path: /site/root.html
+    content: |
+      Some dumb website
+  - owner: www-data:www-data
+    path: /site/healthz.html
+    content: |
+      OK
+  - path: /cert/cert-public.pem
+    content: ${cert-public}
+  - path: /cert/cert-private.pem
+    content: ${cert-private}    
+  - owner: www-data:www-data
+    path: /etc/nginx/sites-available/default
+    content: |
+      server {
+        listen ${https_listening_port} ssl;
+        ssl_certificate     /cert/cert-public.pem;
+        ssl_certificate_key /cert/cert-private.pem;
+        root /site
+        location / {
+          index root.html;
+        }
+        location /healthz {
+          index healthz.html;
+        }
+      }
+  - path: /opt/azure/setup-webserver.sh
+    permissions: '0744'
+    content: |
+      apt-get update
+      apt-get install -y nginx
+# wget --tries 4 --retry-connrefused --waitretry=15 -qO- https://get.docker.com | sh
+# usermod -aG docker $ {admin_username}
+# echo Running `systemctl daemon-reload`
+# systemctl daemon-reload
+# echo Running `service docker restart`
+# service docker restart
+
