@@ -2,7 +2,8 @@
 
 VM_HOSTNAME_BASE="prod-worker"
 
-IDS=(0)
+echo "Destroying 3 worker VMs..."
+IDS=(0 1 2)
 for ID in ${IDS[*]}; do
   VM_ID="$VM_HOSTNAME_BASE-$ID"
   STATE_KEY="$VM_ID.tfstate"
